@@ -1,4 +1,5 @@
-package com.atguigu.gmall.user.bean;
+package com.atguigu.gmall.api.model;
+
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,9 +21,11 @@ public class UmsMember implements Serializable {
     private String  nickname;
     private String  phone;
     private Integer status;
+//    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date    createTime;
     private String  icon;
     private Integer gender;
+//    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8" )
     private Date    birthday;
     private String  city;
     private String  job;
@@ -93,6 +96,7 @@ public class UmsMember implements Serializable {
         return createTime;
     }
 
+//    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8" )
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }

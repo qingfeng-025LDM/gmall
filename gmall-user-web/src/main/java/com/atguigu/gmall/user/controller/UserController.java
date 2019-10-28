@@ -1,10 +1,10 @@
 package com.atguigu.gmall.user.controller;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.atguigu.gmall.api.model.UmsMember;
 import com.atguigu.gmall.api.model.UmsMemberReceiveAddress;
 import com.atguigu.gmall.api.service.UmsMemberReceiveAddressService;
 import com.atguigu.gmall.api.service.UmsMemberService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,9 +18,9 @@ import java.util.List;
 @RequestMapping("/umsMember")
 public class UserController {
 
-    @Autowired
+    @Reference
     private UmsMemberService umsMemberService;
-    @Autowired
+    @Reference
     private UmsMemberReceiveAddressService umsMemberReceiveAddressService;
 
     /*************************************************用户会员****************************************/

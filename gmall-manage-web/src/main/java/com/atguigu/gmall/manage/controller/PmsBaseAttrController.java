@@ -52,21 +52,9 @@ public class PmsBaseAttrController {
     @RequestMapping("/delAttrInfoById")
     @ResponseBody
     public String delAttrInfoById(String attrId){
-        pmsBaseAttrService.delAttrInfoById(attrId);
-        return "success";
+       return pmsBaseAttrService.delAttrInfoById(attrId);
     }
 
-    /**
-     * 修改属性信息
-     * @param pmsBaseAttrInfo
-     * @return
-     */
-//    @RequestMapping("/updateAttrInfo")
-//    @ResponseBody
-//    public String updateAttrInfo(@RequestBody PmsBaseAttrInfo pmsBaseAttrInfo){
-//        pmsBaseAttrService.saveAttrInfo(pmsBaseAttrInfo);
-//        return "success";
-//    }
 
     /***************************************************属性值AttrValue****************************************************/
 

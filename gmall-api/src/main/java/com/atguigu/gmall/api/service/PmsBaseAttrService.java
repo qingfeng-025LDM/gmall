@@ -10,7 +10,7 @@ public interface PmsBaseAttrService {
 
     void saveAttrInfo(PmsBaseAttrInfo pmsBaseAttrInfo);
 
-    void delAttrInfoById(String attrId);
+    String delAttrInfoById(String attrId);
 
     List<PmsBaseAttrValue> getAttrValueList(String attrId);
 }

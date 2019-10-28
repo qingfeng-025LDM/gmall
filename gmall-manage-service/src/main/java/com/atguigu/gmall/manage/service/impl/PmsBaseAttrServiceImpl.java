@@ -6,8 +6,10 @@ import com.atguigu.gmall.api.model.PmsBaseAttrValue;
 import com.atguigu.gmall.api.service.PmsBaseAttrService;
 import com.atguigu.gmall.manage.mapper.PmsBaseAttrInfoMapper;
 import com.atguigu.gmall.manage.mapper.PmsBaseAttrValueMapper;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,7 @@ public class PmsBaseAttrServiceImpl implements PmsBaseAttrService {
         PmsBaseAttrInfo pmsBaseAttrInfo = new PmsBaseAttrInfo();
         pmsBaseAttrInfo.setCatalog3Id(catalog3Id);
         List<PmsBaseAttrInfo> attrInfoList = pmsBaseAttrInfoMapper.select(pmsBaseAttrInfo);
-        if (StringUtils.isEmpty(attrInfoList)){
+        if (CollectionUtils.isEmpty(attrInfoList)){
             return new ArrayList<PmsBaseAttrInfo>();
         }
         return attrInfoList;
@@ -44,23 +46,24 @@ public class PmsBaseAttrServiceImpl implements PmsBaseAttrService {
     public void saveAttrInfo(PmsBaseAttrInfo pmsBaseAttrInfo) {
         String attrInfoId = pmsBaseAttrInfo.getId();    //获取属性信息ID
         if (!StringUtils.isEmpty(attrInfoId)){
-            //先删除原先的属性值
+            //先删除原先的属性值，按照属性ID删除
             PmsBaseAttrValue pmsBaseAttrValue = new PmsBaseAttrValue();
             pmsBaseAttrValue.setAttrId(attrInfoId);
-            List<PmsBaseAttrValue> tempAttrValueList = pmsBaseAttrValueMapper.select(pmsBaseAttrValue);
-            for (PmsBaseAttrValue tempAttrValue:tempAttrValueList) {
-                pmsBaseAttrValueMapper.deleteByPrimaryKey(tempAttrValue.getId());
-            }
-            pmsBaseAttrInfoMapper.updateByPrimaryKey(pmsBaseAttrInfo);
+            pmsBaseAttrValueMapper.delete(pmsBaseAttrValue);
+
+            //使用updateByExampleSelective修改属性信息
+            Example example = new Example(PmsBaseAttrInfo.class);
+            example.createCriteria().andEqualTo("id", attrInfoId);
+            pmsBaseAttrInfoMapper.updateByExampleSelective(pmsBaseAttrInfo, example);
         }else {
-            //插入属性信息
-            pmsBaseAttrInfoMapper.insert(pmsBaseAttrInfo);
+            //插入属性信息，insert插入所有数据，insertSelective插入非空值
+            pmsBaseAttrInfoMapper.insertSelective(pmsBaseAttrInfo);
         }
         //获取属性值list
         List<PmsBaseAttrValue> attrValueList = pmsBaseAttrInfo.getAttrValueList();
         for (PmsBaseAttrValue attrValue:attrValueList) {    //循环插入属性值
-            attrValue.setAttrId(pmsBaseAttrInfo.getId());
-            pmsBaseAttrValueMapper.insert(attrValue);
+            attrValue.setAttrId(attrInfoId);
+            pmsBaseAttrValueMapper.insertSelective(attrValue);
         }
     }
 
@@ -69,8 +72,12 @@ public class PmsBaseAttrServiceImpl implements PmsBaseAttrService {
      * @param attrId
      */
     @Override
-    public void delAttrInfoById(String attrId) {
+    public String delAttrInfoById(String attrId) {
+        if (StringUtils.isBlank(attrId)){
+            return "参数不能为空";
+        }
         pmsBaseAttrInfoMapper.deleteByPrimaryKey(attrId);
+        return "保存成功";
     }
 
     /**
@@ -83,7 +90,7 @@ public class PmsBaseAttrServiceImpl implements PmsBaseAttrService {
         PmsBaseAttrValue pmsBaseAttrValue = new PmsBaseAttrValue();
         pmsBaseAttrValue.setAttrId(attrId);
         List<PmsBaseAttrValue> attrValueList = pmsBaseAttrValueMapper.select(pmsBaseAttrValue);
-        if (StringUtils.isEmpty(attrValueList)){
+        if (CollectionUtils.isEmpty(attrValueList)){
             return new ArrayList<PmsBaseAttrValue>();
         }
         return attrValueList;
